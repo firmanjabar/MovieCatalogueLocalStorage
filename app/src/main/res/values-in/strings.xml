@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Movie Catalogue</string>
+    <string name="action_settings">Pengaturan</string>
+    <string name="nav_movie">Film</string>
+    <string name="nav_tv_show">Acara TV</string>
+    <string name="nav_favorite">Favorit</string>
+    <string name="title_activity_detail">Rincian Film</string>
+    <string name="cover_picture">Gambar Cover</string>
+    <string name="label_title">Judul</string>
+    <string name="label_release_date">Tanggal Rilis</string>
+    <string name="title_activity_detail_tvshow">DetailTVShowActivity</string>
+    <string name="poster">Poster</string>
+    <string name="tagline">Slogan</string>
+    <string name="release_date">Tanggal Rilis</string>
+    <string name="overview">Sinopsis</string>
+    <string name="trailers">Trailer</string>
+    <string name="reviews">Ulasan</string>
+    <string name="first_air_date">Tanggal tayang perdana</string>
+    <string name="last_air_date">Tanggal tayang terakhir</string>
+    <string name="refresh">Kamu belum memiliki data yang tersimpan, tarik ke bawah untuk refresh!</string>
+    <string name="movie_title">Judul</string>
+    <string name="year">Tahun</string>
+    <string name="description">Deskripsi</string>
+	<string name="prod">Rumah Produksi</string>
+    <string name="status">Status</string>
+	<string name="popular">Popularitas</string>
+    <string name="created">Dibuat Oleh</string>
+	<string name="seasons">Seasons</string>
+</resources>

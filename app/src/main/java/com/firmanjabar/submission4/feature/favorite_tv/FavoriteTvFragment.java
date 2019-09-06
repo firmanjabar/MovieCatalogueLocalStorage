@@ -1,6 +1,7 @@
 package com.firmanjabar.submission4.feature.favorite_tv;
 
 import android.app.Activity;
+import android.app.SearchManager;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -13,9 +14,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import com.firmanjabar.submission4.R;
@@ -25,6 +30,7 @@ import com.firmanjabar.submission4.feature.tv_detail.TvDetailActivity;
 import com.firmanjabar.submission4.utils.Constant;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -35,7 +41,6 @@ public class FavoriteTvFragment extends Fragment implements FavoriteTvAdapter.On
     @BindView(R.id.swipeRefreshLayout) SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.tv_empty) TextView tv_empty;
 
-    public static Boolean doneLoaded = false;
     private Context context;
     private FavoriteTvAdapter adapter;
     private FavoriteTvViewModelFactory viewModelFactory;
@@ -72,11 +77,12 @@ public class FavoriteTvFragment extends Fragment implements FavoriteTvAdapter.On
         super.onActivityCreated(savedInstanceState);
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(FavoriteTvViewModel.class);
         observer = movieList -> {
-            swipeRefreshLayout.setRefreshing(false);
-            adapter.setListFavorite(movieList);
-            adapter.notifyDataSetChanged();
-            assert movieList != null;
-            tv_empty.setVisibility((movieList.size()>0)? View.INVISIBLE : View.VISIBLE);
+            if (movieList != null){
+                swipeRefreshLayout.setRefreshing(false);
+                adapter.setListFavorite(movieList);
+                adapter.notifyDataSetChanged();
+                tv_empty.setVisibility((movieList.size()>0)? View.INVISIBLE : View.VISIBLE);
+            }
         };
         viewModel.getResponse().observe(getViewLifecycleOwner(), observer);
     }
@@ -112,5 +118,9 @@ public class FavoriteTvFragment extends Fragment implements FavoriteTvAdapter.On
         if (resultCode == Activity.RESULT_OK) {
             viewModel.loadFavoriteMovie();
         }
+    }
+
+    public FavoriteTvAdapter getAdapter() {
+        return adapter;
     }
 }

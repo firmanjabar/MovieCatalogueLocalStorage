@@ -60,8 +60,9 @@ public class MovieDetailViewModel extends ViewModel {
     void changeFavState (){
         MovieDetail movieDetail = movieResponse.getValue();
         if (movieDetail != null){
-            try (Realm realm = Realm.getDefaultInstance()) {
-                if (!isFavorite.getValue()) {
+            Realm realm = Realm.getDefaultInstance();
+            try {
+                if (!isFavorite.getValue()){
                     realm.executeTransaction(realm1 -> {
                         Favorite favorite = realm1.createObject(Favorite.class, movieDetail.getId());
                         favorite.setPoster_path(movieDetail.getPoster_path());
@@ -78,11 +79,13 @@ public class MovieDetailViewModel extends ViewModel {
                                 .equalTo("id", movieDetail.getId())
                                 .equalTo("type", "movie")
                                 .findFirst();
-                        if (favorite != null) {
+                        if (favorite != null){
                             favorite.deleteFromRealm();
                         }
                     });
                 }
+            } finally {
+                realm.close();
             }
         }
         isFavorite.setValue(!isFavorite.getValue());
@@ -94,14 +97,17 @@ public class MovieDetailViewModel extends ViewModel {
     }
     private void setDataMovie(MovieDetail movieDetail) {
         movieResponse.setValue(movieDetail);
-        try (Realm realm = Realm.getDefaultInstance()) {
+        Realm realm = Realm.getDefaultInstance();
+        try {
             RealmResults<Favorite> results = realm.where(Favorite.class)
                     .equalTo("id", movieDetail.getId())
                     .equalTo("type", "movie")
                     .findAll();
             Boolean valid = results.size() > 0;
             isFavorite.setValue(valid);
-        }
+        } finally {
+        realm.close();
+    }
     }
     private void onErrorVideos(Throwable e) {
         Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();

@@ -1,6 +1,7 @@
 package com.firmanjabar.submission4.feature.movie;
 
 
+import android.app.SearchManager;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -12,9 +13,13 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ProgressBar;
 
 import com.firmanjabar.submission4.R;
@@ -27,14 +32,11 @@ import com.firmanjabar.submission4.feature.movie_detail.MovieDetailActivity;
 import com.firmanjabar.submission4.utils.Constant;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-
-/**
- * A simple {@link Fragment} subclass.
- */
 public class MovieFragment extends Fragment implements MovieAdapter.OnItemClickListener {
 
     @BindView(R.id.rv) RecyclerView rv;
@@ -42,7 +44,6 @@ public class MovieFragment extends Fragment implements MovieAdapter.OnItemClickL
 
     private Context context;
     private MovieAdapter adapter;
-    private ArrayList<Movie> list = new ArrayList<>();
     private MovieViewModelFactory viewModelFactory;
     private MovieViewModel viewModel;
     private Observer<MovieResponse> observer;
@@ -56,6 +57,7 @@ public class MovieFragment extends Fragment implements MovieAdapter.OnItemClickL
         context = view.getContext();
         viewModelFactory = new MovieViewModelFactory(context);
         ButterKnife.bind(this, view);
+        setHasOptionsMenu(true);
         return view;
     }
 
@@ -71,14 +73,43 @@ public class MovieFragment extends Fragment implements MovieAdapter.OnItemClickL
         super.onActivityCreated(savedInstanceState);
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(MovieViewModel.class);
         observer = movieResponse -> {
-            progressBar.setVisibility(View.GONE);
-            assert movieResponse != null;
-            list = movieResponse.getResults();
-            setLayoutManager(context);
-            adapter.setListMovie(list);
-            rv.setAdapter(adapter);
+            if (movieResponse != null) {
+                progressBar.setVisibility(View.GONE);
+                setLayoutManager(context);
+                adapter.setListMovie(movieResponse.getResults());
+                rv.setAdapter(adapter);
+            }
         };
         viewModel.getResponse().observe(getViewLifecycleOwner(), observer);
+    }
+
+    @Override
+    public void onCreateOptionsMenu( Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        SearchManager searchManager = (SearchManager) context.getSystemService(Context.SEARCH_SERVICE);
+        if (searchManager != null) {
+            SearchView searchView = (SearchView) (menu.findItem(R.id.search)).getActionView();
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(Objects.requireNonNull(getActivity()).getComponentName()));
+            searchView.setQueryHint(getResources().getString(R.string.movie_hint));
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    InputMethodManager inputManager = (InputMethodManager)
+                            Objects.requireNonNull(getActivity()).getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (inputManager != null) {
+                        inputManager.hideSoftInputFromWindow(Objects.requireNonNull(getActivity().getCurrentFocus()).getWindowToken(),
+                                InputMethodManager.HIDE_NOT_ALWAYS);
+                    }
+                    return true;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    adapter.filter(newText);
+                    return false;
+                }
+            });
+        }
     }
 
     @Override
@@ -95,21 +126,19 @@ public class MovieFragment extends Fragment implements MovieAdapter.OnItemClickL
     }
 
     public void setLayoutManager(Context context) {
-        GridLayoutManager gridLayoutManager;
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            gridLayoutManager = new GridLayoutManager(context, 1);
-        } else {
-            gridLayoutManager = new GridLayoutManager(context, 2);
-        }
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(
+                context,
+                (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) ? 1 : 2
+        );
         rv.setLayoutManager(gridLayoutManager);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (MainActivity.isFavViewLoaded){
-            FavoritePagerAdapter.getFragments()[0].onActivityResult(requestCode,resultCode,data);
-            FavoritePagerAdapter.getFragments()[1].onActivityResult(requestCode,resultCode,data);
+        if (MainActivity.isFavViewLoaded) {
+            FavoritePagerAdapter.getFragments()[0].onActivityResult(requestCode, resultCode, data);
+            FavoritePagerAdapter.getFragments()[1].onActivityResult(requestCode, resultCode, data);
         }
     }
 

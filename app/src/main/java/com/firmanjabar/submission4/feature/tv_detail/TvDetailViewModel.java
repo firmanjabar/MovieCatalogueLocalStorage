@@ -95,8 +95,9 @@ public class TvDetailViewModel extends ViewModel {
     void changeFavState (){
         TvDetail tvDetail = tvResponse.getValue();
         if (tvDetail != null){
-            try (Realm realm = Realm.getDefaultInstance()) {
-                if (!isFavorite.getValue()) {
+            Realm realm = Realm.getDefaultInstance();
+            try {
+                if (!isFavorite.getValue()){
                     realm.executeTransaction(realm1 -> {
                         Favorite favorite = realm1.createObject(Favorite.class, tvDetail.getId());
                         favorite.setPoster_path(tvDetail.getPoster_path());
@@ -113,15 +114,18 @@ public class TvDetailViewModel extends ViewModel {
                                 .equalTo("id", tvDetail.getId())
                                 .equalTo("type", "tvshow")
                                 .findFirst();
-                        if (favorite != null) {
+                        if (favorite != null){
                             favorite.deleteFromRealm();
                         }
                     });
                 }
+            } finally {
+                realm.close();
             }
         }
         isFavorite.setValue(!isFavorite.getValue());
     }
+
 
     private void onErrorMovie(Throwable e) {
         Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -129,13 +133,16 @@ public class TvDetailViewModel extends ViewModel {
     }
     private void setDataMovie( TvDetail tvDetail ) {
         tvResponse.setValue(tvDetail);
-        try (Realm realm = Realm.getDefaultInstance()) {
+        Realm realm = Realm.getDefaultInstance();
+        try {
             RealmResults<Favorite> results = realm.where(Favorite.class)
                     .equalTo("id", tvDetail.getId())
                     .equalTo("type", "tvshow")
                     .findAll();
             Boolean valid = results.size() > 0;
             isFavorite.setValue(valid);
+        }finally {
+            realm.close();
         }
     }
 

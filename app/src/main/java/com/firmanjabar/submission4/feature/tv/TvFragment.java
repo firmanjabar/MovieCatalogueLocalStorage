@@ -1,6 +1,7 @@
 package com.firmanjabar.submission4.feature.tv;
 
 
+import android.app.SearchManager;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -12,9 +13,13 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ProgressBar;
 
 import com.firmanjabar.submission4.R;
@@ -27,6 +32,7 @@ import com.firmanjabar.submission4.feature.tv_detail.TvDetailActivity;
 import com.firmanjabar.submission4.utils.Constant;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,7 +44,6 @@ public class TvFragment extends Fragment implements TvAdapter.OnItemClickListene
 
     private Context context;
     private TvAdapter adapter;
-    private ArrayList<Tv> list = new ArrayList<>();
     private TvViewModelFactory viewModelFactory;
     private TvViewModel viewModel;
     private Observer<TvResponse> observer;
@@ -52,6 +57,7 @@ public class TvFragment extends Fragment implements TvAdapter.OnItemClickListene
         context = view.getContext();
         viewModelFactory = new TvViewModelFactory(context);
         ButterKnife.bind(this, view);
+        setHasOptionsMenu(true);
         return view;
     }
 
@@ -67,14 +73,43 @@ public class TvFragment extends Fragment implements TvAdapter.OnItemClickListene
         super.onActivityCreated(savedInstanceState);
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(TvViewModel.class);
         observer = tvResponse -> {
-            progressBar.setVisibility(View.GONE);
-            assert tvResponse != null;
-            list = tvResponse.getResults();
-            setLayoutManager(context);
-            adapter.setListMovie(list);
-            rv.setAdapter(adapter);
+            if (tvResponse != null) {
+                progressBar.setVisibility(View.GONE);
+                setLayoutManager(context);
+                adapter.setListTv(tvResponse.getResults());
+                rv.setAdapter(adapter);
+            }
         };
         viewModel.getResponse().observe(getViewLifecycleOwner(), observer);
+    }
+
+    @Override
+    public void onCreateOptionsMenu( Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        SearchManager searchManager = (SearchManager) context.getSystemService(Context.SEARCH_SERVICE);
+        if (searchManager != null) {
+            SearchView searchView = (SearchView) (menu.findItem(R.id.search)).getActionView();
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(Objects.requireNonNull(getActivity()).getComponentName()));
+            searchView.setQueryHint(getResources().getString(R.string.tv_hint));
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    InputMethodManager inputManager = (InputMethodManager)
+                            Objects.requireNonNull(getActivity()).getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (inputManager != null) {
+                        inputManager.hideSoftInputFromWindow(Objects.requireNonNull(getActivity().getCurrentFocus()).getWindowToken(),
+                                InputMethodManager.HIDE_NOT_ALWAYS);
+                    }
+                    return true;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    adapter.filter(newText);
+                    return false;
+                }
+            });
+        }
     }
 
     @Override
@@ -100,12 +135,10 @@ public class TvFragment extends Fragment implements TvAdapter.OnItemClickListene
     }
 
     public void setLayoutManager(Context context) {
-        GridLayoutManager gridLayoutManager;
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            gridLayoutManager = new GridLayoutManager(context, 1);
-        } else {
-            gridLayoutManager = new GridLayoutManager(context, 2);
-        }
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(
+                context,
+                (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)? 1:2
+        );
         rv.setLayoutManager(gridLayoutManager);
     }
 

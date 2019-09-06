@@ -17,7 +17,9 @@ import com.firmanjabar.submission4.utils.Utils;
 import java.util.ArrayList;
 
 public class FavoriteMovieAdapter extends RecyclerView.Adapter<FavoriteMovieAdapter.GridViewHolder> {
+
     private ArrayList<Favorite> listFavorite;
+    private ArrayList<Favorite> listFavoriteFull;
     private final OnItemClickListener listener;
 
     public interface OnItemClickListener {
@@ -26,7 +28,8 @@ public class FavoriteMovieAdapter extends RecyclerView.Adapter<FavoriteMovieAdap
 
     public FavoriteMovieAdapter(Context context, OnItemClickListener listener) {
         this.listener = listener;
-        listFavorite = new ArrayList<Favorite>();
+        listFavorite = new ArrayList<>();
+        listFavoriteFull = new ArrayList<>();
     }
 
     private ArrayList<Favorite> getListFavorite () {
@@ -35,6 +38,8 @@ public class FavoriteMovieAdapter extends RecyclerView.Adapter<FavoriteMovieAdap
 
     public void setListFavorite(ArrayList<Favorite> listFavorite) {
         this.listFavorite = listFavorite;
+        listFavoriteFull.clear();
+        listFavoriteFull.addAll(listFavorite);
     }
 
     @NonNull
@@ -75,5 +80,22 @@ public class FavoriteMovieAdapter extends RecyclerView.Adapter<FavoriteMovieAdap
             Utils.setImage(favorite.getPoster_path(), imgPhoto);
             itemView.setOnClickListener(v -> listener.onItemClick(favorite));
         }
+    }
+
+    public void filter(String textSearched) {
+        textSearched = textSearched.toLowerCase();
+        listFavorite.clear();
+        if (!listFavoriteFull.isEmpty()){
+            if (textSearched.length() != 0){
+                for (Favorite favorite: listFavoriteFull) {
+                    if (favorite.getTitle().toLowerCase().contains(textSearched)){
+                        listFavorite.add(favorite);
+                    }
+                }
+            } else {
+                listFavorite.addAll(listFavoriteFull);
+            }
+        }
+        notifyDataSetChanged();
     }
 }

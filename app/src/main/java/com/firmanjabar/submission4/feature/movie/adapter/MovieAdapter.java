@@ -17,16 +17,38 @@ import com.firmanjabar.submission4.utils.Utils;
 import java.util.ArrayList;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.GridViewHolder> {
+
+    private Context context;
     private ArrayList<Movie> listMovie;
+    private ArrayList<Movie> listMovieFull;
     private final OnItemClickListener listener;
+
+    public void filter(String textSearched) {
+        textSearched = textSearched.toLowerCase();
+        listMovie.clear();
+        if (!listMovieFull.isEmpty()){
+            if (textSearched.length() != 0){
+                for (Movie movie: listMovieFull) {
+                    if (movie.getTitle().toLowerCase().contains(textSearched)){
+                        listMovie.add(movie);
+                    }
+                }
+            } else {
+                listMovie.addAll(listMovieFull);
+            }
+        }
+        notifyDataSetChanged();
+    }
 
     public interface OnItemClickListener {
         void onItemClick ( Movie movie );
     }
 
     public MovieAdapter(Context context, OnItemClickListener listener) {
+        this.context = context;
         this.listener = listener;
-        listMovie = new ArrayList<Movie>();
+        listMovie = new ArrayList<>();
+        listMovieFull = new ArrayList<>();
     }
 
     private ArrayList<Movie> getListMovie () {
@@ -35,6 +57,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.GridViewHold
 
     public void setListMovie(ArrayList<Movie> listMovie) {
         this.listMovie = listMovie;
+        listMovieFull.clear();
+        listMovieFull.addAll(listMovie);
     }
 
     @NonNull
@@ -73,12 +97,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.GridViewHold
 
         void bind(final Movie movie, final OnItemClickListener listener) {
             Utils.setImage(movie.getPoster_path(), imgPhoto);
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onItemClick(movie);
-                }
-            });
+            itemView.setOnClickListener(v -> listener.onItemClick(movie));
         }
     }
 }

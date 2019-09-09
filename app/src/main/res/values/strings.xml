@@ -8,16 +8,16 @@
     <string name="cover_picture">Cover Picture</string>
     <string name="label_title">Title</string>
     <string name="label_release_date">Release Date</string>
-    <string name="title_activity_detail_tvshow">DetailTVShowActivity</string>
+    <string name="title_activity_detail_tv">DetailTvActivity</string>
     <string name="poster">Poster</string>
-    <string name="tagline">Tagline</string>
+    <string name="tagline">Tag line</string>
     <string name="release_date">Release Date</string>
     <string name="overview">Overview</string>
     <string name="trailers">Trailers</string>
     <string name="reviews">Reviews</string>
     <string name="first_air_date">First air date</string>
     <string name="last_air_date">Last air date</string>
-    <string name="refresh">You didn\'t save any data yet, swipe down to refresh!</string>
+    <string name="refresh">You don\'t save any data yet, swipe down to refresh!</string>
 	<string name="movie_title">Title</string>
     <string name="year">Year</string>
     <string name="description">Description</string>
@@ -30,4 +30,8 @@
     <string name="reminder_setting">Reminder</string>
     <string name="movie_hint">Input keyword movies</string>
     <string name="tv_hint">Input keyword tv</string>
+    <string name="empty_string">You don\'t have any data</string>
+	<string name="appwidget_text">EXAMPLE</string>
+	<string name="add_widget">Add widget</string>
+
 </resources>

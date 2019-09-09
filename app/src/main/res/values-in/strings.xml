@@ -9,7 +9,7 @@
     <string name="cover_picture">Gambar Cover</string>
     <string name="label_title">Judul</string>
     <string name="label_release_date">Tanggal Rilis</string>
-    <string name="title_activity_detail_tvshow">DetailTVShowActivity</string>
+    <string name="title_activity_detail_tv">DetailTvActivity</string>
     <string name="poster">Poster</string>
     <string name="tagline">Slogan</string>
     <string name="release_date">Tanggal Rilis</string>
@@ -31,4 +31,7 @@
     <string name="reminder_setting">Pengingat</string>
     <string name="movie_hint">Masukkan kata kunci film</string>
     <string name="tv_hint">Masukkan kata kunci tv</string>
+    <string name="empty_string">Kamu belum menyimpan data</string>
+    <string name="appwidget_text">Contoh</string>
+    <string name="add_widget">Tambah widget</string>
 </resources>

@@ -8,8 +8,9 @@
 	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 	<uses-permission android:name="android.permission.VIBRATE" />
 	<uses-permission android:name="android.permission.WAKE_LOCK" />
-	<permission android:name="com.firmanjabar.submission4.READ_DATABASE"/>
-	<permission android:name="com.firmanjabar.submission4.WRITE_DATABASE"/>
+
+	<permission android:name="com.firmanjabar.submission4.READ_DATABASE" />
+	<permission android:name="com.firmanjabar.submission4.WRITE_DATABASE" />
 
 	<application
 		android:allowBackup="true"
@@ -18,7 +19,6 @@
 		android:roundIcon="@mipmap/ic_launcher_round"
 		android:supportsRtl="true"
 		android:theme="@style/AppTheme">
-
 		<receiver android:name=".widget.ImageBannerWidget">
 			<intent-filter>
 				<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -28,10 +28,11 @@
 				android:name="android.appwidget.provider"
 				android:resource="@xml/image_banner_widget_info" />
 		</receiver>
+
 		<activity
 			android:name=".feature.tv_detail.TvDetailActivity"
-			android:label="@string/title_activity_detail_tvshow"
-			android:theme="@style/AppTheme.NoActionBar"/>
+			android:label="@string/title_activity_detail_tv"
+			android:theme="@style/AppTheme.NoActionBar" />
 		<activity
 			android:name=".feature.movie_detail.MovieDetailActivity"
 			android:label="@string/title_activity_detail"
@@ -53,6 +54,10 @@
 			android:exported="true"
 			android:readPermission="com.firmanjabar.submission4.READ_DATABASE"
 			android:writePermission="com.firmanjabar.submission4.WRITE_DATABASE" />
+
+		<service
+			android:name=".widget.StackWidgetServices"
+			android:permission="android.permission.BIND_REMOTE" />
 	</application>
 
 </manifest>

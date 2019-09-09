@@ -15,6 +15,7 @@ import com.firmanjabar.submission4.feature.main.adapter.MainPagerAdapter;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationViewPager;
+import com.firmanjabar.submission4.feature.reminder.ReminderActivity;
 
 import java.util.ArrayList;
 
@@ -68,10 +69,10 @@ public class MainActivity extends AppCompatActivity implements AHBottomNavigatio
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.reminder_setting:
+                startActivity(new Intent(this, ReminderActivity.class));
                 return true;
             case R.id.language_settings:
-                Intent mIntent = new Intent(Settings.ACTION_LOCALE_SETTINGS);
-                startActivity(mIntent);
+                startActivity(new Intent(Settings.ACTION_LOCALE_SETTINGS));
                 return true;
         }
         return super.onOptionsItemSelected(item);

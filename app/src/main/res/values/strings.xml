@@ -33,5 +33,17 @@
     <string name="empty_string">You don\'t have any data</string>
 	<string name="appwidget_text">EXAMPLE</string>
 	<string name="add_widget">Add widget</string>
+	<string name="release_reminder">Release reminder</string>
+	<string name="detail_reminder_release">Detail reminder release</string>
+	<string name="daily_reminder">Daily reminder</string>
+	<string name="detail_daily_reminder">Open app now! you won\'t miss the movie!</string>
+	<string name="message_daily">Movie Catalogue missing you!</string>
+	<string name="release_movie_message">%s has been release today!</string>
+	<string name="active_release_reminder">Release Reminder Activated</string>
+	<string name="deactive_release_reminder">Release Reminder Deactivated</string>
+	<string name="active_daily_reminder">Daily Remidner Activated</string>
+	<string name="deactive_daily_remindedr">Deactive Daily Reminder</string>
+	<string name="missing">Oowww!</string>
+	<string name="no_release_message">There is no released movie today!</string>
 
 </resources>

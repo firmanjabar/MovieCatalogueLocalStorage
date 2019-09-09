@@ -19,6 +19,18 @@
 		android:roundIcon="@mipmap/ic_launcher_round"
 		android:supportsRtl="true"
 		android:theme="@style/AppTheme">
+
+		<receiver
+			android:name=".notification.ReleaseReceiver"
+			android:enabled="true"
+			android:exported="false"/>
+		<receiver
+			android:name=".notification.DailyReceiver"
+			android:enabled="true"
+			android:exported="false" />
+
+		<activity android:name=".feature.reminder.ReminderActivity" />
+
 		<receiver android:name=".widget.ImageBannerWidget">
 			<intent-filter>
 				<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

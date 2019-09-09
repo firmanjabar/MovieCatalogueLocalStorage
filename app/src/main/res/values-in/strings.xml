@@ -34,4 +34,16 @@
     <string name="empty_string">Kamu belum menyimpan data</string>
     <string name="appwidget_text">Contoh</string>
     <string name="add_widget">Tambah widget</string>
+    <string name="release_reminder">Notifikasi Rilis</string>
+    <string name="detail_reminder_release">Detail notifikasi rilis</string>
+    <string name="daily_reminder">Notifikasi Harian</string>
+    <string name="detail_daily_reminder">Detail notifikasi harian</string>
+    <string name="message_daily">Kamu kemana aja? Cek movie catalogue yuk!</string>
+    <string name="release_movie_message">%s rilis hari ini! jangan lupa nonton ya!</string>
+    <string name="active_release_reminder">Notifikasi Rilis Diaktifkan</string>
+    <string name="deactive_release_reminder">Notifikasi Rilis Dinonaktifkan</string>
+    <string name="active_daily_reminder">Notifikasi Harian Diaktifkan</string>
+    <string name="deactive_daily_remindedr">Notifikasi Harian Dinonaktifkan</string>
+    <string name="missing">Oowww!</string>
+    <string name="no_release_message">There is no released movie today!</string>
 </resources>

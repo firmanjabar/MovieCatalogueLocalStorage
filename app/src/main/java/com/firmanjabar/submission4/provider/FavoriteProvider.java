@@ -58,7 +58,6 @@ public class FavoriteProvider extends ContentProvider {
     @Override
     public Cursor query(@NonNull Uri uri, String[] strings, String s, String[] strings1, String s1) {
         //Get Realm Instance
-        Realm realm = Realm.getDefaultInstance();
         MatrixCursor myCursor = new MatrixCursor( new String[]{FavoriteColumns._ID
                 , FavoriteColumns.POSTER
                 , FavoriteColumns.TITLE
@@ -68,8 +67,8 @@ public class FavoriteProvider extends ContentProvider {
                 , FavoriteColumns.TYPE
         });
 
-        try {
-            switch(sUriMatcher.match(uri)){
+        try (Realm realm = Realm.getDefaultInstance()) {
+            switch (sUriMatcher.match(uri)) {
                 case FAVORITE_MOVIE:
                     RealmResults<Favorite> favoriteRealmResults = realm.where(Favorite.class).equalTo("type", "movie").findAll();
                     for (Favorite favMovie : favoriteRealmResults) {
@@ -105,10 +104,8 @@ public class FavoriteProvider extends ContentProvider {
                 default:
                     throw new UnsupportedOperationException("Unknown uri: " + uri);
             }
-            myCursor.setNotificationUri(Objects.requireNonNull(getContext()).getContentResolver(),uri);
+            myCursor.setNotificationUri(Objects.requireNonNull(getContext()).getContentResolver(), uri);
 
-        } finally {
-            realm.close();
         }
         return myCursor;
     }
@@ -122,9 +119,8 @@ public class FavoriteProvider extends ContentProvider {
     @Override
     public Uri insert(@NonNull Uri uri, ContentValues contentValues) {
         Uri returnUri;
-        Realm realm = Realm.getDefaultInstance();
-        try {
-            switch (sUriMatcher.match(uri)){
+        try (Realm realm = Realm.getDefaultInstance()) {
+            switch (sUriMatcher.match(uri)) {
                 case FAVORITE_MOVIE:
                 case FAVORITE_TV:
                     realm.executeTransaction(realm1 -> {
@@ -138,29 +134,25 @@ public class FavoriteProvider extends ContentProvider {
                         realm1.insertOrUpdate(fav);
                     });
                     returnUri = ContentUris.withAppendedId(
-                            (sUriMatcher.match(uri) == FAVORITE_MOVIE_ID)? FavoriteColumns.CONTENT_URI_MOVIE: FavoriteColumns.CONTENT_URI_TV,
+                            (sUriMatcher.match(uri) == FAVORITE_MOVIE_ID) ? FavoriteColumns.CONTENT_URI_MOVIE : FavoriteColumns.CONTENT_URI_TV,
                             Long.parseLong(contentValues.get(FavoriteColumns._ID).toString()));
                     break;
                 default:
                     throw new UnsupportedOperationException("Unknown uri: " + uri);
             }
             Objects.requireNonNull(getContext()).getContentResolver().notifyChange(uri, null);
-        } finally {
-            realm.close();
         }
         return returnUri;
     }
 
-
     @Override
     public int update(@NonNull Uri uri, ContentValues contentValues, String s, String[] strings) {
-        Realm realm = Realm.getDefaultInstance();
         int updated = 0;
 
-        try {
+        try (Realm realm = Realm.getDefaultInstance()) {
             String id;
             Favorite fav;
-            String type = (sUriMatcher.match(uri) == FAVORITE_MOVIE_ID)? "movie": "tv";
+            String type = (sUriMatcher.match(uri) == FAVORITE_MOVIE_ID) ? "movie" : "tv";
             id = uri.getPathSegments().get(1);
             fav = realm.where(Favorite.class).equalTo("id", id).equalTo("type", type).findFirst();
             realm.beginTransaction();
@@ -174,8 +166,6 @@ public class FavoriteProvider extends ContentProvider {
                 updated++;
             }
             realm.commitTransaction();
-        } finally {
-            realm.close();
         }
 
         if (updated > 0) {
@@ -187,13 +177,12 @@ public class FavoriteProvider extends ContentProvider {
     @Override
     public int delete(@NonNull Uri uri, String selection, String[] strings) {
         int count = 0;
-        Realm realm = Realm.getDefaultInstance();
-        try {
+        try (Realm realm = Realm.getDefaultInstance()) {
             String type;
             switch (sUriMatcher.match(uri)) {
                 case FAVORITE_MOVIE:
                 case FAVORITE_TV:
-                    type = (sUriMatcher.match(uri) == FAVORITE_MOVIE)? "movie": "tv";
+                    type = (sUriMatcher.match(uri) == FAVORITE_MOVIE) ? "movie" : "tv";
                     selection = (selection == null) ? "1" : selection;
                     RealmResults<Favorite> favoriteRealmResults = realm.where(Favorite.class).equalTo(selection, strings[0]).equalTo("type", type).findAll();
                     realm.beginTransaction();
@@ -203,7 +192,7 @@ public class FavoriteProvider extends ContentProvider {
                     break;
                 case FAVORITE_MOVIE_ID:
                 case FAVORITE_TV_ID:
-                    type = (sUriMatcher.match(uri) == FAVORITE_MOVIE_ID)? "movie": "tv";
+                    type = (sUriMatcher.match(uri) == FAVORITE_MOVIE_ID) ? "movie" : "tv";
                     String id = String.valueOf(ContentUris.parseId(uri));
                     Favorite fav = realm.where(Favorite.class).equalTo("id", id).equalTo("type", type).findFirst();
                     realm.beginTransaction();
@@ -217,8 +206,6 @@ public class FavoriteProvider extends ContentProvider {
                     throw new IllegalArgumentException("Illegal delete URI");
             }
 
-        } finally {
-            realm.close();
         }
 
         if (count > 0) {

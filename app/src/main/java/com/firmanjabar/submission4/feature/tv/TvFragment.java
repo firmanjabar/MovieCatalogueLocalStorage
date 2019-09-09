@@ -100,12 +100,14 @@ public class TvFragment extends Fragment implements TvAdapter.OnItemClickListene
                         inputManager.hideSoftInputFromWindow(Objects.requireNonNull(getActivity().getCurrentFocus()).getWindowToken(),
                                 InputMethodManager.HIDE_NOT_ALWAYS);
                     }
+                    progressBar.setVisibility(View.VISIBLE);
+                    viewModel.searchTv(query);
                     return true;
                 }
 
                 @Override
                 public boolean onQueryTextChange(String newText) {
-                    adapter.filter(newText);
+//                    adapter.filter(newText);
                     return false;
                 }
             });

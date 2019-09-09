@@ -44,6 +44,13 @@ public interface RequestInterface {
             @Query("api_key") String api_key
     );
 
+    @GET("search/movie")
+    Observable<MovieResponse> searchMovie(
+            @Query("api_key") String api_key,
+            @Query("language") String language,
+            @Query("query") String query
+    );
+
     @GET("tv/{tv_id}")
     Observable<TvDetail> getTvDetail (
             @Path("tv_id") String tv_id,
@@ -60,5 +67,12 @@ public interface RequestInterface {
     Observable<ReviewResponse> getTvReviews (
             @Path("tv_id") String tv_id,
             @Query("api_key") String api_key
+    );
+
+    @GET("search/tv")
+    Observable<TvResponse> searchTv(
+            @Query("api_key") String api_key,
+            @Query("language") String language,
+            @Query("query") String query
     );
 }

@@ -3,21 +3,33 @@ package com.firmanjabar.submission4.feature.movie_detail;
 import android.annotation.SuppressLint;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.widget.Toast;
 
 import com.firmanjabar.submission4.data.api.RetroServer;
-import com.firmanjabar.submission4.data.model.Favorite;
 import com.firmanjabar.submission4.data.model.MovieDetail;
 import com.firmanjabar.submission4.data.model.ReviewResponse;
 import com.firmanjabar.submission4.data.model.VideoResponse;
 import com.firmanjabar.submission4.utils.Constant;
 
+import java.lang.ref.WeakReference;
+
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
-import io.realm.Realm;
-import io.realm.RealmResults;
+
+import static com.firmanjabar.submission4.data.db.DatabaseContract.FavoriteColumns.CONTENT_URI_MOVIE;
+import static com.firmanjabar.submission4.data.db.DatabaseContract.FavoriteColumns.OVERVIEW;
+import static com.firmanjabar.submission4.data.db.DatabaseContract.FavoriteColumns.DATE;
+import static com.firmanjabar.submission4.data.db.DatabaseContract.FavoriteColumns.TITLE;
+import static com.firmanjabar.submission4.data.db.DatabaseContract.FavoriteColumns.VOTE;
+import static com.firmanjabar.submission4.data.db.DatabaseContract.FavoriteColumns.POSTER;
+import static com.firmanjabar.submission4.data.db.DatabaseContract.FavoriteColumns.TYPE;
+import static com.firmanjabar.submission4.data.db.DatabaseContract.FavoriteColumns._ID;
 
 public class MovieDetailViewModel extends ViewModel {
 
@@ -26,6 +38,7 @@ public class MovieDetailViewModel extends ViewModel {
     private final MutableLiveData<ReviewResponse> reviewResponse = new MutableLiveData<>();
     private final MutableLiveData<VideoResponse> videoResponse = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isFavorite = new MutableLiveData<>();
+    private Uri mUri;
     @SuppressLint("StaticFieldLeak")
     private Context context;
 
@@ -59,36 +72,26 @@ public class MovieDetailViewModel extends ViewModel {
 
     void changeFavState (){
         MovieDetail movieDetail = movieResponse.getValue();
-        if (movieDetail != null){
-            Realm realm = Realm.getDefaultInstance();
-            try {
-                if (!isFavorite.getValue()){
-                    realm.executeTransaction(realm1 -> {
-                        Favorite favorite = realm1.createObject(Favorite.class, movieDetail.getId());
-                        favorite.setPoster_path(movieDetail.getPoster_path());
-                        favorite.setTitle(movieDetail.getTitle());
-                        favorite.setOverview(movieDetail.getOverview());
-                        favorite.setRelease_date(movieDetail.getRelease_date());
-                        favorite.setVote_average(movieDetail.getVote_average());
-                        favorite.setType("movie");
-                        realm1.insertOrUpdate(favorite);
-                    });
-                } else {
-                    realm.executeTransaction(realm1 -> {
-                        Favorite favorite = realm1.where(Favorite.class)
-                                .equalTo("id", movieDetail.getId())
-                                .equalTo("type", "movie")
-                                .findFirst();
-                        if (favorite != null){
-                            favorite.deleteFromRealm();
-                        }
-                    });
-                }
-            } finally {
-                realm.close();
+        if (movieDetail != null && isFavorite.getValue() != null){
+            if (!isFavorite.getValue()) {
+                ContentValues values = new ContentValues();
+                values.put(_ID, movieDetail.getId());
+                values.put(POSTER, movieDetail.getPoster_path());
+                values.put(TITLE, movieDetail.getTitle());
+                values.put(OVERVIEW, movieDetail.getOverview());
+                values.put(DATE, movieDetail.getRelease_date());
+                values.put(VOTE, movieDetail.getVote_average());
+                values.put(TYPE, "movie");
+                context.getContentResolver().insert(CONTENT_URI_MOVIE, values);
+            } else {
+                mUri = CONTENT_URI_MOVIE
+                        .buildUpon()
+                        .appendPath(String.valueOf(movieDetail.getId()))
+                        .build();
+                context.getContentResolver().delete(mUri, null, null);
             }
+            isFavorite.setValue(!isFavorite.getValue());
         }
-        isFavorite.setValue(!isFavorite.getValue());
     }
 
     private void onErrorMovie(Throwable e) {
@@ -97,17 +100,11 @@ public class MovieDetailViewModel extends ViewModel {
     }
     private void setDataMovie(MovieDetail movieDetail) {
         movieResponse.setValue(movieDetail);
-        Realm realm = Realm.getDefaultInstance();
-        try {
-            RealmResults<Favorite> results = realm.where(Favorite.class)
-                    .equalTo("id", movieDetail.getId())
-                    .equalTo("type", "movie")
-                    .findAll();
-            Boolean valid = results.size() > 0;
-            isFavorite.setValue(valid);
-        } finally {
-        realm.close();
+        loadFavoriteMovieWithId(context, movieDetail.getId());
     }
+
+    private void loadFavoriteMovieWithId ( Context context, String id ){
+        new AsyncFavMovieWithID(context, id).execute();
     }
     private void onErrorVideos(Throwable e) {
         Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -157,4 +154,35 @@ public class MovieDetailViewModel extends ViewModel {
         );
     }
 
+    @SuppressLint("StaticFieldLeak")
+    public class AsyncFavMovieWithID extends AsyncTask<Void, Void, Cursor> {
+        private WeakReference<Context> weakContext;
+        String id;
+
+        AsyncFavMovieWithID(Context context, String id) {
+            this.weakContext = new WeakReference<>(context);
+            this.id = id;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Cursor doInBackground(Void... voids) {
+            Context context = weakContext.get();
+            mUri = CONTENT_URI_MOVIE
+                    .buildUpon()
+                    .appendPath(String.valueOf(id))
+                    .build();
+            return context.getContentResolver().query(mUri, null,null,null,null, null);
+        }
+
+        @Override
+        protected void onPostExecute(Cursor cursor) {
+            super.onPostExecute(cursor);
+            isFavorite.setValue(cursor.getCount()>0);
+        }
+    }
 }

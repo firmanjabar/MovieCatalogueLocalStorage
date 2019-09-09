@@ -20,8 +20,6 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
 
 public class MainActivity extends AppCompatActivity implements AHBottomNavigation.OnTabSelectedListener{
     @BindView(R.id.container_layout) AHBottomNavigationViewPager container_layout;
@@ -34,12 +32,6 @@ public class MainActivity extends AppCompatActivity implements AHBottomNavigatio
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Realm.init(this);
-        RealmConfiguration config = new RealmConfiguration.Builder()
-                .schemaVersion(0)
-                .deleteRealmIfMigrationNeeded()
-                .build();
-        Realm.setDefaultConfiguration(config);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         initBottomNavigation();

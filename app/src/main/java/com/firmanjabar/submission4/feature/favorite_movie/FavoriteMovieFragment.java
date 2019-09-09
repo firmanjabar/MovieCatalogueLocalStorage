@@ -1,8 +1,6 @@
 package com.firmanjabar.submission4.feature.favorite_movie;
 
-
 import android.app.Activity;
-import android.app.SearchManager;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -15,13 +13,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import com.firmanjabar.submission4.R;
@@ -31,7 +25,6 @@ import com.firmanjabar.submission4.feature.movie_detail.MovieDetailActivity;
 import com.firmanjabar.submission4.utils.Constant;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -50,6 +43,9 @@ public class FavoriteMovieFragment extends Fragment implements FavoriteMovieAdap
 
     public FavoriteMovieFragment() {}
 
+    public FavoriteMovieAdapter getAdapter() {
+        return adapter;
+    }
 
     @Override
     public View onCreateView( @NonNull LayoutInflater inflater, ViewGroup container,
@@ -69,7 +65,9 @@ public class FavoriteMovieFragment extends Fragment implements FavoriteMovieAdap
         setLayoutManager(context);
         rv.setAdapter(adapter);
 
-        swipeRefreshLayout.setOnRefreshListener(() -> viewModel.loadFavoriteMovie());
+        swipeRefreshLayout.setOnRefreshListener(() ->
+                viewModel.loadFavoriteMovie(context)
+        );
     }
 
     @Override
@@ -116,11 +114,7 @@ public class FavoriteMovieFragment extends Fragment implements FavoriteMovieAdap
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
-            viewModel.loadFavoriteMovie();
+            viewModel.loadFavoriteMovie(context);
         }
-    }
-
-    public FavoriteMovieAdapter getAdapter() {
-        return adapter;
     }
 }

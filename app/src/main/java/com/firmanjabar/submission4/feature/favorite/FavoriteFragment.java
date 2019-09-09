@@ -65,6 +65,7 @@ public class FavoriteFragment extends Fragment {
 
             @Override
             public void onPageSelected(int i) {
+                filterMovieAndTv(i, "");
                 setSearchQueryListener(i);
             }
 
@@ -102,16 +103,20 @@ public class FavoriteFragment extends Fragment {
             }
             @Override
             public boolean onQueryTextChange(String newText) {
-                Fragment fragment = FavoritePagerAdapter.getFragments()[i];
-                if (fragment instanceof FavoriteMovieFragment){
-                    ((FavoriteMovieFragment) fragment).getAdapter().filter(newText);
-                } else if (fragment instanceof FavoriteTvFragment){
-                    ((FavoriteTvFragment) fragment).getAdapter().filter(newText);
-                } else {
-                    Toast.makeText(context, "Unknown Fragment", Toast.LENGTH_SHORT).show();
-                }
+                filterMovieAndTv(i, newText);
                 return false;
             }
         });
+    }
+
+    void filterMovieAndTv(int i, String newText){
+        Fragment fragment = FavoritePagerAdapter.getFragments()[i];
+        if (fragment instanceof FavoriteMovieFragment){
+            ((FavoriteMovieFragment) fragment).getAdapter().filter(newText);
+        } else if (fragment instanceof FavoriteTvFragment){
+            ((FavoriteTvFragment) fragment).getAdapter().filter(newText);
+        } else {
+            Toast.makeText(context, "Unknown Fragment", Toast.LENGTH_SHORT).show();
+        }
     }
 }

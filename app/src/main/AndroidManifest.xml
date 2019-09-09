@@ -4,6 +4,12 @@
 
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+	<uses-permission android:name="android.permission.VIBRATE" />
+	<uses-permission android:name="android.permission.WAKE_LOCK" />
+	<permission android:name="com.firmanjabar.submission4.READ_DATABASE"/>
+	<permission android:name="com.firmanjabar.submission4.WRITE_DATABASE"/>
 
 	<application
 		android:allowBackup="true"
@@ -30,6 +36,13 @@
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
+
+		<provider
+			android:name=".provider.FavoriteProvider"
+			android:authorities="com.firmanjabar.submission4"
+			android:exported="true"
+			android:readPermission="com.firmanjabar.submission4.READ_DATABASE"
+			android:writePermission="com.firmanjabar.submission4.WRITE_DATABASE" />
 	</application>
 
 </manifest>

@@ -3,7 +3,16 @@ package com.firmanjabar.submission4.data.model;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class Favorite extends RealmObject {
+import android.database.Cursor;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.firmanjabar.submission4.data.db.DatabaseContract.FavoriteColumns;
+
+import static com.firmanjabar.submission4.data.db.DatabaseContract.getColumnDouble;
+import static com.firmanjabar.submission4.data.db.DatabaseContract.getColumnString;
+
+public class Favorite extends RealmObject implements Parcelable{
 
     @PrimaryKey
     private String id;
@@ -84,4 +93,52 @@ public class Favorite extends RealmObject {
     public void setType(String type) {
         this.type = type;
     }
+
+    public Favorite(Cursor cursor) {
+        this.id = getColumnString(cursor, FavoriteColumns._ID);
+        this.poster_path = getColumnString(cursor, FavoriteColumns.POSTER);
+        this.title = getColumnString(cursor, FavoriteColumns.TITLE);
+        this.overview = getColumnString(cursor, FavoriteColumns.OVERVIEW);
+        this.release_date = getColumnString(cursor, FavoriteColumns.DATE);
+        this.vote_average = getColumnDouble(cursor, FavoriteColumns.VOTE);
+        this.type = getColumnString(cursor, FavoriteColumns.TYPE);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.id);
+        dest.writeString(this.poster_path);
+        dest.writeString(this.title);
+        dest.writeString(this.overview);
+        dest.writeString(this.release_date);
+        dest.writeDouble(this.vote_average);
+        dest.writeString(this.type);
+    }
+
+    protected Favorite(Parcel in) {
+        this.id = in.readString();
+        this.poster_path = in.readString();
+        this.title = in.readString();
+        this.overview = in.readString();
+        this.release_date = in.readString();
+        this.vote_average = in.readDouble();
+        this.type = in.readString();
+    }
+
+    public static final Parcelable.Creator<Favorite> CREATOR = new Parcelable.Creator<Favorite>() {
+        @Override
+        public Favorite createFromParcel(Parcel source) {
+            return new Favorite(source);
+        }
+
+        @Override
+        public Favorite[] newArray(int size) {
+            return new Favorite[size];
+        }
+    };
 }

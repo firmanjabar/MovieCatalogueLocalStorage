@@ -31,7 +31,6 @@ import com.firmanjabar.submission4.feature.movie.adapter.MovieAdapter;
 import com.firmanjabar.submission4.feature.movie_detail.MovieDetailActivity;
 import com.firmanjabar.submission4.utils.Constant;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
 import butterknife.BindView;
@@ -69,21 +68,6 @@ public class MovieFragment extends Fragment implements MovieAdapter.OnItemClickL
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(MovieViewModel.class);
-        observer = movieResponse -> {
-            if (movieResponse != null) {
-                progressBar.setVisibility(View.GONE);
-                setLayoutManager(context);
-                adapter.setListMovie(movieResponse.getResults());
-                rv.setAdapter(adapter);
-            }
-        };
-        viewModel.getResponse().observe(getViewLifecycleOwner(), observer);
-    }
-
-    @Override
     public void onCreateOptionsMenu( Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         SearchManager searchManager = (SearchManager) context.getSystemService(Context.SEARCH_SERVICE);
@@ -112,6 +96,21 @@ public class MovieFragment extends Fragment implements MovieAdapter.OnItemClickL
                 }
             });
         }
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(MovieViewModel.class);
+        observer = movieResponse -> {
+            if (movieResponse != null) {
+                progressBar.setVisibility(View.GONE);
+                setLayoutManager(context);
+                adapter.setListMovie(movieResponse.getResults());
+                rv.setAdapter(adapter);
+            }
+        };
+        viewModel.getResponse().observe(getViewLifecycleOwner(), observer);
     }
 
     @Override

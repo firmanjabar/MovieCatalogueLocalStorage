@@ -31,7 +31,6 @@ import com.firmanjabar.submission4.feature.tv.adapter.TvAdapter;
 import com.firmanjabar.submission4.feature.tv_detail.TvDetailActivity;
 import com.firmanjabar.submission4.utils.Constant;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
 import butterknife.BindView;

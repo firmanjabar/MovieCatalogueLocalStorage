@@ -24,12 +24,10 @@
 
 		<activity
 			android:name=".feature.tv_detail.TvDetailActivity"
-			android:label="@string/title_activity_detail_tv"
-			android:theme="@style/AppTheme.NoActionBar" />
+			android:label="@string/title_activity_detail_tv" />
 		<activity
 			android:name=".feature.movie_detail.MovieDetailActivity"
-			android:label="@string/title_activity_detail"
-			android:theme="@style/AppTheme.NoActionBar" />
+			android:label="@string/title_activity_detail" />
 	</application>
 
 </manifest>

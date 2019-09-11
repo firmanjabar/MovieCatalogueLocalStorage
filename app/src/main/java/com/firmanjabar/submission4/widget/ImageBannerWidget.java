@@ -41,7 +41,7 @@ public class ImageBannerWidget extends AppWidgetProvider {
         if (intent.getAction() != null) {
             if (intent.getAction().equals(TOAST_ACTION)) {
                 int viewIndex = intent.getIntExtra(EXTRA_ITEM, 0);
-                Toast.makeText(context, "Touched view " + viewIndex, Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Refreshed", Toast.LENGTH_SHORT).show();
             }
         }
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
